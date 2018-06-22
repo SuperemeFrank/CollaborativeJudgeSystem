@@ -19,5 +19,4 @@ export class ProblemDetailComponent implements OnInit {
       this.problem = this.data.getProblem(+params["id"]);
     });
   }
-
 }
