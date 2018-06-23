@@ -13,7 +13,7 @@ router.get("/problems", function (req, res) {
 
 router.get("/problems/:id", function (req, res) {
   var id = req.params.id;
-  problemService.getProblems(+id)
+  problemService.getProblem(+id)
     .then(problem => res.json(problem));
 });
 
