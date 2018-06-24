@@ -3,8 +3,10 @@ import { Problem } from '../models/problem.model';
 import { PROBLEMS } from '../mock-problems';
 import { Http, Response, Headers} from '@angular/http';
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { Observable } from "rxjs/Obervable";
+import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/toPromise";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { RequestOptions } from "@angular/http";
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +33,11 @@ export class DataService {
                     .then((res: Response) => res.json())
                     .catch(this.handleError);
   }
+  private headers: Headers = new Headers({ 'content-type' : 'application/json' });
+  private options: RequestOptions = new RequestOptions({ headers: this.headers });
   addProblem(problem: Problem): Promise<Problem> {
-    let headers = new Headers({ 'content-type' : 'application/json' });
-    return this.http.post('/api/v1/problems', problem, headers)
+
+    return this.http.post('/api/v1/problems', problem, this.options)
       .toPromise()
       .then((res: Response) => {
         this.getProblems(); // to refresh the page

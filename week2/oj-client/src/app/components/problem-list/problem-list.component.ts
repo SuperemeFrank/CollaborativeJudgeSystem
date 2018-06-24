@@ -8,9 +8,9 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['./problem-list.component.css']
 })
 export class ProblemListComponent implements OnInit {
-  problems: Problem[];
+  problems: Problem[] = [];
 
-  subcriptionProblems: Subscription;
+  subscriptionProblems: Subscription;
 
   constructor(@Inject("data") private data) { }  // get data
 
@@ -18,7 +18,7 @@ export class ProblemListComponent implements OnInit {
     this.getProblems();
   }
   getProblems(): void {
-    this.problems = this.data.getProblems()
+    this.subscriptionProblems = this.data.getProblems()
                               .subscribe(problems => this.problems = problems);
   }
 
