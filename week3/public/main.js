@@ -217,7 +217,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n  <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n    <span class=\"navbar-toggler-icon\"></span>\n  </button>\n\n  <div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n    <ul class=\"navbar-nav mr-auto\">\n      <li class=\"nav-item active\">\n        <a class=\"nav-link\" href=\"#\">Home <span class=\"sr-only\">(current)</span></a>\n      </li>\n    </ul>\n    <form class=\"form-inline my-2 my-lg-0\">\n      <input class=\"form-control mr-sm-2\" type=\"search\" placeholder=\"Search Problem\" aria-label=\"Search\">\n    </form>\n    <ul class=\"nav navbar-nav narbar-right\">\n      <li class=\"nav-item dropdown\">\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n        aria-haspopup=\"true\" aria-expanded=\"false\">\n        {{username}}\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" href=\"#\">Myprofile</a>\n          <a class=\"dropdown-item\" href=\"#\">My Favorites</a>\n          <a class=\"dropdown-item\" href=\"#\">My Submission</a>\n          <div class=\"dropdown-divider\"></div>\n          <a class=\"dropdown-item\" href=\"#\">Something else here</a>\n        </div>\n    </li>\n      <form class=\"navbar-form\">\n        <button id=\"qsLoginBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"!auth.isAuthenticated()\"\n          (click)=\"auth.login()\" type=\"button\">\n            Log In\n        </button>\n\n        <button id=\"qsLogoutBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"auth.isAuthenticated()\"\n          (click)=\"auth.logout()\" type=\"button\">\n            Log Out\n        </button>\n      </form>\n    </ul>\n  </div>\n  </nav>\n</div>\n"
+module.exports = "<div class=\"container\">\n  <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n  <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n    <span class=\"navbar-toggler-icon\"></span>\n  </button>\n\n  <div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n    <ul class=\"navbar-nav mr-auto\">\n      <li class=\"nav-item active\">\n        <a class=\"nav-link\" href=\"#\">Home <span class=\"sr-only\">(current)</span></a>\n      </li>\n    </ul>\n    <form class=\"form-inline my-2 my-lg-0\">\n      <input class=\"form-control mr-sm-2\" type=\"search\" placeholder=\"Search Problem\" aria-label=\"Search\">\n    </form>\n    <ul class=\"nav navbar-nav narbar-right\">\n      <li class=\"nav-item dropdown\">\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n        aria-haspopup=\"true\" aria-expanded=\"false\">\n        {{profile?.nickname}}\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" href=\"#\">Myprofile</a>\n          <a class=\"dropdown-item\" href=\"#\">My Favorites</a>\n          <a class=\"dropdown-item\" href=\"#\">My Submission</a>\n          <div class=\"dropdown-divider\"></div>\n          <a class=\"dropdown-item\" href=\"#\">Something else here</a>\n        </div>\n    </li>\n      <form class=\"navbar-form\">\n        <button id=\"qsLoginBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"!auth.isAuthenticated()\"\n          (click)=\"auth.login()\" type=\"button\">\n            Log In\n        </button>\n\n        <button id=\"qsLogoutBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"auth.isAuthenticated()\"\n          (click)=\"auth.logout()\" type=\"button\">\n            Log Out\n        </button>\n      </form>\n    </ul>\n  </div>\n  </nav>\n</div>\n"
 
 /***/ }),
 
@@ -248,9 +248,19 @@ var NavbarComponent = /** @class */ (function () {
     function NavbarComponent(auth) {
         this.auth = auth;
         this.title = "Collaborative Judge System";
-        this.username = "";
         auth.handleAuthentication();
     }
+    NavbarComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        if (this.auth.userProfile) {
+            this.profile = this.auth.userProfile;
+        }
+        else if (localStorage.getItem('access_token')) {
+            this.auth.getProfile(function (err, profile) {
+                _this.profile = profile;
+            });
+        }
+    };
     NavbarComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-navbar',
@@ -535,7 +545,7 @@ var AuthService = /** @class */ (function () {
             responseType: 'token id_token',
             audience: 'https://frankyu.auth0.com/userinfo',
             redirectUri: 'http://localhost:3000',
-            scope: 'openid'
+            scope: 'openid profile'
         });
     }
     AuthService.prototype.login = function () {
@@ -575,6 +585,19 @@ var AuthService = /** @class */ (function () {
         // access token's expiry time
         var expiresAt = JSON.parse(localStorage.getItem('expires_at') || '{}');
         return new Date().getTime() < expiresAt;
+    };
+    AuthService.prototype.getProfile = function (cb) {
+        var accessToken = localStorage.getItem('access_token');
+        if (!accessToken) {
+            throw new Error('Access Token must exist to fetch profile');
+        }
+        var self = this;
+        this.auth0.client.userInfo(accessToken, function (err, profile) {
+            if (profile) {
+                self.userProfile = profile;
+            }
+            cb(err, profile);
+        });
     };
     AuthService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
