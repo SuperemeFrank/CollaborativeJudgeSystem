@@ -217,7 +217,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n  <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n    <span class=\"navbar-toggler-icon\"></span>\n  </button>\n\n  <div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n    <ul class=\"navbar-nav mr-auto\">\n      <li class=\"nav-item active\">\n        <a class=\"nav-link\" href=\"#\">Home <span class=\"sr-only\">(current)</span></a>\n      </li>\n    </ul>\n    <form class=\"form-inline my-2 my-lg-0\">\n      <input class=\"form-control mr-sm-2\" type=\"search\" placeholder=\"Search Problem\" aria-label=\"Search\">\n    </form>\n    <ul class=\"nav navbar-nav narbar-right\">\n      <li class=\"nav-item dropdown\">\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n        aria-haspopup=\"true\" aria-expanded=\"false\">\n        {{profile?.nickname}}\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" href=\"#\">Myprofile</a>\n          <a class=\"dropdown-item\" href=\"#\">My Favorites</a>\n          <a class=\"dropdown-item\" href=\"#\">My Submission</a>\n          <div class=\"dropdown-divider\"></div>\n          <a class=\"dropdown-item\" href=\"#\">Something else here</a>\n        </div>\n    </li>\n      <form class=\"navbar-form\">\n        <button id=\"qsLoginBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"!auth.isAuthenticated()\"\n          (click)=\"auth.login()\" type=\"button\">\n            Log In\n        </button>\n\n        <button id=\"qsLogoutBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"auth.isAuthenticated()\"\n          (click)=\"auth.logout()\" type=\"button\">\n            Log Out\n        </button>\n      </form>\n    </ul>\n  </div>\n  </nav>\n</div>\n"
+module.exports = "<div class=\"container\">\n  <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n  <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n    <span class=\"navbar-toggler-icon\"></span>\n  </button>\n\n  <div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n    <ul class=\"navbar-nav mr-auto\">\n      <li class=\"nav-item active\">\n        <a class=\"nav-link\" href=\"#\">Home <span class=\"sr-only\">(current)</span></a>\n      </li>\n    </ul>\n    <form class=\"form-inline my-2 my-lg-0\">\n      <input class=\"form-control mr-sm-2\" type=\"search\" placeholder=\"Search Problem\" aria-label=\"Search\">\n    </form>\n    <ul class=\"nav navbar-nav narbar-right\">\n      <li class=\"nav-item dropdown\">\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n        aria-haspopup=\"true\" aria-expanded=\"false\">\n        {{profile?.nickname}}\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" href=\"#\">Myprofile</a>\n          <a class=\"dropdown-item\" href=\"#\">My Favorites</a>\n          <a class=\"dropdown-item\" href=\"#\">My Submission</a>\n          <div class=\"dropdown-divider\"></div>\n          <a class=\"dropdown-item\" href=\"#\">Something else here</a>\n        </div>\n    </li>\n      <form class=\"navbar-form\">\n        <button id=\"qsLoginBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"!auth.isAuthenticated()\"\n          (click)=\"login()\" type=\"button\">\n            Log In\n        </button>\n\n        <button id=\"qsLogoutBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"auth.isAuthenticated()\"\n          (click)=\"logout()\" type=\"button\">\n            Log Out\n        </button>\n      </form>\n    </ul>\n  </div>\n  </nav>\n</div>\n"
 
 /***/ }),
 
@@ -246,20 +246,33 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 var NavbarComponent = /** @class */ (function () {
     function NavbarComponent(auth) {
+        var _this = this;
         this.auth = auth;
         this.title = "Collaborative Judge System";
-        auth.handleAuthentication();
+        auth.handleAuthentication()
+            .then(function (userProfile) {
+            console.log("nav then");
+            _this.profile = userProfile;
+        })
+            .catch();
     }
     NavbarComponent.prototype.ngOnInit = function () {
         var _this = this;
         if (this.auth.userProfile) {
             this.profile = this.auth.userProfile;
         }
-        else if (localStorage.getItem('access_token')) {
+        else {
             this.auth.getProfile(function (err, profile) {
                 _this.profile = profile;
             });
         }
+    };
+    NavbarComponent.prototype.login = function () {
+        this.auth.login();
+    };
+    NavbarComponent.prototype.logout = function () {
+        this.auth.logout();
+        this.profile = "";
     };
     NavbarComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -553,30 +566,49 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.handleAuthentication = function () {
         var _this = this;
-        this.auth0.parseHash(function (err, authResult) {
-            if (authResult && authResult.accessToken && authResult.idToken) {
-                _this.setSession(authResult);
-                _this.router.navigate(['/']);
-            }
-            else if (err) {
-                _this.router.navigate(['/']);
-                console.log(err);
-                alert("Error: " + err.error + ". Check the console for further details.");
-            }
+        return new Promise(function (resolve, reject) {
+            _this.auth0.parseHash(function (err, authResult) {
+                if (authResult && authResult.accessToken && authResult.idToken) {
+                    var self = _this;
+                    _this.setSession(authResult)
+                        .then(function () {
+                        self.userProfile = localStorage.getItem('profile');
+                        resolve(JSON.parse(self.userProfile));
+                    });
+                    _this.router.navigate(['/']);
+                }
+                else if (err) {
+                    _this.router.navigate(['/']);
+                    console.log(err);
+                    alert("Error: " + err.error + ". Check the console for further details.");
+                    reject();
+                }
+            });
         });
     };
     AuthService.prototype.setSession = function (authResult) {
-        // Set the time that the access token will expire at
-        var expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-        localStorage.setItem('access_token', authResult.accessToken);
-        localStorage.setItem('id_token', authResult.idToken);
-        localStorage.setItem('expires_at', expiresAt);
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+            localStorage.setItem('access_token', authResult.accessToken);
+            localStorage.setItem('id_token', authResult.idToken);
+            localStorage.setItem('expires_at', expiresAt);
+            var accessToken = localStorage.getItem('access_token');
+            _this.auth0.client.userInfo(authResult.accessToken, function (err, profile) {
+                if (profile) {
+                    console.log("set profile");
+                    localStorage.setItem('profile', JSON.stringify(profile));
+                    resolve();
+                }
+            });
+        });
     };
     AuthService.prototype.logout = function () {
         // Remove tokens and expiry time from localStorage
         localStorage.removeItem('access_token');
         localStorage.removeItem('id_token');
         localStorage.removeItem('expires_at');
+        localStorage.removeItem('profile');
         // Go back to the home route
         this.router.navigate(['/']);
     };

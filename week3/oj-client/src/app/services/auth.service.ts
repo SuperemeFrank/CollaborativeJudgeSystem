@@ -27,25 +27,45 @@ export class AuthService {
   public login(): void {
     this.auth0.authorize();
   }
-  public handleAuthentication(): void {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.setSession(authResult);
-        this.router.navigate(['/']);
-      } else if (err) {
-        this.router.navigate(['/']);
-        console.log(err);
-        alert(`Error: ${err.error}. Check the console for further details.`);
-      }
+  public handleAuthentication(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.auth0.parseHash((err, authResult) => {
+        if (authResult && authResult.accessToken && authResult.idToken) {
+          var self =  this;
+          this.setSession(authResult)
+              .then(function() {
+                self.userProfile = localStorage.getItem('profile');
+                resolve(JSON.parse(self.userProfile));
+              });
+          this.router.navigate(['/']);
+
+        } else if (err) {
+          this.router.navigate(['/']);
+          console.log(err);
+          alert(`Error: ${err.error}. Check the console for further details.`);
+          reject();
+        }
+      });
     });
+
   }
 
-  private setSession(authResult): void {
-    // Set the time that the access token will expire at
-    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-    localStorage.setItem('access_token', authResult.accessToken);
-    localStorage.setItem('id_token', authResult.idToken);
-    localStorage.setItem('expires_at', expiresAt);
+  private setSession(authResult): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+      localStorage.setItem('access_token', authResult.accessToken);
+      localStorage.setItem('id_token', authResult.idToken);
+      localStorage.setItem('expires_at', expiresAt);
+      const accessToken = localStorage.getItem('access_token');
+      this.auth0.client.userInfo(authResult.accessToken, (err, profile) => {
+        if (profile) {
+          console.log("set profile");
+          localStorage.setItem('profile', JSON.stringify(profile));
+          resolve();
+        }
+      });
+    })
+
   }
 
   public logout(): void {
@@ -53,6 +73,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+    localStorage.removeItem('profile');
     // Go back to the home route
     this.router.navigate(['/']);
   }

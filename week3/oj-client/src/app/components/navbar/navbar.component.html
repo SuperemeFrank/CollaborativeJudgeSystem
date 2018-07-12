@@ -32,14 +32,14 @@
         <button id="qsLoginBtn"
           class="btn btn-primary my-2 my-sm-0"
           *ngIf="!auth.isAuthenticated()"
-          (click)="auth.login()" type="button">
+          (click)="login()" type="button">
             Log In
         </button>
 
         <button id="qsLogoutBtn"
           class="btn btn-primary my-2 my-sm-0"
           *ngIf="auth.isAuthenticated()"
-          (click)="auth.logout()" type="button">
+          (click)="logout()" type="button">
             Log Out
         </button>
       </form>

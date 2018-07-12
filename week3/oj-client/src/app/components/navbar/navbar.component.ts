@@ -11,16 +11,28 @@ export class NavbarComponent {
   profile: any;
 
   constructor(public auth: AuthService) {
-    auth.handleAuthentication();
+    auth.handleAuthentication()
+        .then(userProfile => {
+          console.log("nav then")
+          this.profile = userProfile;
+        })
+        .catch();
   }
-
   ngOnInit(){
     if (this.auth.userProfile) {
       this.profile = this.auth.userProfile;
-    } else if (localStorage.getItem('access_token')) {
+    } else {
       this.auth.getProfile((err, profile) => {
         this.profile = profile;
-       });
-     }
+      });
+    }
+  }
+  public login() {
+    this.auth.login();
+  }
+
+  public logout() {
+    this.auth.logout();
+    this.profile = "";
   }
 }
