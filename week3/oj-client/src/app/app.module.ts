@@ -11,14 +11,16 @@ import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HttpModule } from '@angular/http';
 import { AuthService } from './services/auth.service';
-
+import { ProfileComponent } from './components/profile/profile.component';
+import { AuthGuardService } from './services/auth-guard.service';
 @NgModule({
   declarations: [
     AppComponent,
     ProblemListComponent,
     ProblemDetailComponent,
     NewProblemComponent,
-    NavbarComponent
+    NavbarComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +34,15 @@ import { AuthService } from './services/auth.service';
       provide: "data",
       useClass: DataService   // make service global
     },
-    AuthService
+    AuthService,
+    {
+      provide: "auth",
+      useClass: AuthService
+    },
+    {
+      provide: "authGuard",
+      useClass: AuthGuardService
+    }
   ],
   bootstrap: [AppComponent]
 })

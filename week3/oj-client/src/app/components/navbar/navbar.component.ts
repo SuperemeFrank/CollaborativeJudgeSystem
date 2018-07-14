@@ -19,20 +19,17 @@ export class NavbarComponent {
         .catch();
   }
   ngOnInit(){
-    if (this.auth.userProfile) {
-      this.profile = this.auth.userProfile;
-    } else {
-      this.auth.getProfile((err, profile) => {
-        this.profile = profile;
-      });
+    if (localStorage.getItem('profile')) {
+      this.profile = JSON.parse(localStorage.getItem('profile'));
     }
   }
-  public login() {
-    this.auth.login();
-  }
 
-  public logout() {
-    this.auth.logout();
-    this.profile = "";
+    public login() {
+      this.auth.login();
+    }
+
+    public logout() {
+      this.auth.logout();
+      this.profile = "";
+    }
   }
-}

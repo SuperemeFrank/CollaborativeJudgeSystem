@@ -104,12 +104,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/navbar/navbar.component */ "./src/app/components/navbar/navbar.component.ts");
 /* harmony import */ var _angular_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/http */ "./node_modules/@angular/http/fesm5/http.js");
 /* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./services/auth.service */ "./src/app/services/auth.service.ts");
+/* harmony import */ var _components_profile_profile_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./components/profile/profile.component */ "./src/app/components/profile/profile.component.ts");
+/* harmony import */ var _services_auth_guard_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./services/auth-guard.service */ "./src/app/services/auth-guard.service.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -133,7 +137,8 @@ var AppModule = /** @class */ (function () {
                 _components_problem_list_problem_list_component__WEBPACK_IMPORTED_MODULE_3__["ProblemListComponent"],
                 _components_problem_detail_problem_detail_component__WEBPACK_IMPORTED_MODULE_7__["ProblemDetailComponent"],
                 _components_new_problem_new_problem_component__WEBPACK_IMPORTED_MODULE_8__["NewProblemComponent"],
-                _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__["NavbarComponent"]
+                _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__["NavbarComponent"],
+                _components_profile_profile_component__WEBPACK_IMPORTED_MODULE_13__["ProfileComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -147,7 +152,15 @@ var AppModule = /** @class */ (function () {
                     provide: "data",
                     useClass: _services_data_service__WEBPACK_IMPORTED_MODULE_6__["DataService"] // make service global
                 },
-                _services_auth_service__WEBPACK_IMPORTED_MODULE_12__["AuthService"]
+                _services_auth_service__WEBPACK_IMPORTED_MODULE_12__["AuthService"],
+                {
+                    provide: "auth",
+                    useClass: _services_auth_service__WEBPACK_IMPORTED_MODULE_12__["AuthService"]
+                },
+                {
+                    provide: "authGuard",
+                    useClass: _services_auth_guard_service__WEBPACK_IMPORTED_MODULE_14__["AuthGuardService"]
+                }
             ],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_2__["AppComponent"]]
         })
@@ -172,6 +185,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _components_problem_list_problem_list_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/problem-list/problem-list.component */ "./src/app/components/problem-list/problem-list.component.ts");
 /* harmony import */ var _components_problem_detail_problem_detail_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/problem-detail/problem-detail.component */ "./src/app/components/problem-detail/problem-detail.component.ts");
+/* harmony import */ var _components_profile_profile_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/profile/profile.component */ "./src/app/components/profile/profile.component.ts");
+/* harmony import */ var _services_auth_guard_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./services/auth-guard.service */ "./src/app/services/auth-guard.service.ts");
+
+
 
 
 
@@ -188,6 +205,11 @@ var routes = [
     {
         path: "problems/:id",
         component: _components_problem_detail_problem_detail_component__WEBPACK_IMPORTED_MODULE_2__["ProblemDetailComponent"]
+    },
+    {
+        path: "profile",
+        component: _components_profile_profile_component__WEBPACK_IMPORTED_MODULE_3__["ProfileComponent"],
+        canActivate: [_services_auth_guard_service__WEBPACK_IMPORTED_MODULE_4__["AuthGuardService"]]
     },
     {
         path: "**",
@@ -217,7 +239,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n  <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n    <span class=\"navbar-toggler-icon\"></span>\n  </button>\n\n  <div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n    <ul class=\"navbar-nav mr-auto\">\n      <li class=\"nav-item active\">\n        <a class=\"nav-link\" href=\"#\">Home <span class=\"sr-only\">(current)</span></a>\n      </li>\n    </ul>\n    <form class=\"form-inline my-2 my-lg-0\">\n      <input class=\"form-control mr-sm-2\" type=\"search\" placeholder=\"Search Problem\" aria-label=\"Search\">\n    </form>\n    <ul class=\"nav navbar-nav narbar-right\">\n      <li class=\"nav-item dropdown\">\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n        aria-haspopup=\"true\" aria-expanded=\"false\">\n        {{profile?.nickname}}\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" href=\"#\">Myprofile</a>\n          <a class=\"dropdown-item\" href=\"#\">My Favorites</a>\n          <a class=\"dropdown-item\" href=\"#\">My Submission</a>\n          <div class=\"dropdown-divider\"></div>\n          <a class=\"dropdown-item\" href=\"#\">Something else here</a>\n        </div>\n    </li>\n      <form class=\"navbar-form\">\n        <button id=\"qsLoginBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"!auth.isAuthenticated()\"\n          (click)=\"login()\" type=\"button\">\n            Log In\n        </button>\n\n        <button id=\"qsLogoutBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"auth.isAuthenticated()\"\n          (click)=\"logout()\" type=\"button\">\n            Log Out\n        </button>\n      </form>\n    </ul>\n  </div>\n  </nav>\n</div>\n"
+module.exports = "<div class=\"container\">\n  <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\n  <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n  <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n    <span class=\"navbar-toggler-icon\"></span>\n  </button>\n\n  <div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">\n    <ul class=\"navbar-nav mr-auto\">\n      <li class=\"nav-item active\">\n        <a class=\"nav-link\" href=\"#\">Home <span class=\"sr-only\">(current)</span></a>\n      </li>\n    </ul>\n    <form class=\"form-inline my-2 my-lg-0\">\n      <input class=\"form-control mr-sm-2\" type=\"search\" placeholder=\"Search Problem\" aria-label=\"Search\">\n    </form>\n    <ul class=\"nav navbar-nav narbar-right\">\n      <li class=\"nav-item dropdown\" *ngIf=\"auth.isAuthenticated()\">\n        <a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown\" role=\"button\" data-toggle=\"dropdown\"\n        aria-haspopup=\"true\" aria-expanded=\"false\">\n        {{profile?.nickname}}\n        </a>\n        <div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">\n          <a class=\"dropdown-item\" routerLink=\"/profile\">Myprofile</a>\n          <a class=\"dropdown-item\" href=\"#\">My Favorites</a>\n          <a class=\"dropdown-item\" href=\"#\">My Submission</a>\n          <div class=\"dropdown-divider\"></div>\n          <a class=\"dropdown-item\" href=\"#\">Something else here</a>\n        </div>\n    </li>\n      <form class=\"navbar-form\">\n        <button id=\"qsLoginBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"!auth.isAuthenticated()\"\n          (click)=\"login()\" type=\"button\">\n            Log In\n        </button>\n\n        <button id=\"qsLogoutBtn\"\n          class=\"btn btn-primary my-2 my-sm-0\"\n          *ngIf=\"auth.isAuthenticated()\"\n          (click)=\"logout()\" type=\"button\">\n            Log Out\n        </button>\n      </form>\n    </ul>\n  </div>\n  </nav>\n</div>\n"
 
 /***/ }),
 
@@ -257,14 +279,8 @@ var NavbarComponent = /** @class */ (function () {
             .catch();
     }
     NavbarComponent.prototype.ngOnInit = function () {
-        var _this = this;
-        if (this.auth.userProfile) {
-            this.profile = this.auth.userProfile;
-        }
-        else {
-            this.auth.getProfile(function (err, profile) {
-                _this.profile = profile;
-            });
+        if (localStorage.getItem('profile')) {
+            this.profile = JSON.parse(localStorage.getItem('profile'));
         }
     };
     NavbarComponent.prototype.login = function () {
@@ -307,7 +323,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n  <form #formRef=\"ngForm\">\n    <div class=\"form-group\">\n      <label for=\"problemName\">Problem Name</label>\n      <input type=\"text\" class=\"form-control\" id=\"problemName\" name=\"problemName\"\n      required placeholder=\"Enter Problem Name\" [(ngModel)]=\"newProblem.name\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"problemDesc\">Problem Description</label>\n      <textarea type=\"text\" row=\"3\" class=\"form-control\" id=\"problemDesc\" name=\"problemDesc\"\n      required placeholder=\"Enter Problem Description\" [(ngModel)]=\"newProblem.desc\"></textarea>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"difficulty\">Difficulty</label>\n      <select class=\"form-control\" id=\"difficulty\" name=\"difficulty\"\n      [(ngModel)]=\"newProblem.difficulty\">\n        <option value=\"default\" disabled selected>Select difficulty</option>\n        <option *ngFor=\"let difficulty of difficulties\" [value]=\"difficulty\">\n          {{difficulty}}\n        </option>\n      </select>\n    </div>\n    <div class=\"row\">\n      <div class=\"col-md-12\">\n        <button type=\"submit\" class=\"btn btn-primary pull-right\" (click)=\"addProblem()\">Add Problem</button>\n      </div>\n    </div>\n  </form>\n</div>\n"
+module.exports = "<div class = \"container\">\n  <hr>\n  <form #formRef=\"ngForm\">\n    <div class=\"form-group\">\n      <label for=\"problemName\">Problem Name</label>\n      <input type=\"text\" class=\"form-control\" id=\"problemName\" name=\"problemName\"\n      required placeholder=\"Enter Problem Name\" [(ngModel)]=\"newProblem.name\">\n    </div>\n    <div class=\"form-group\">\n      <label for=\"problemDesc\">Problem Description</label>\n      <textarea type=\"text\" row=\"3\" class=\"form-control\" id=\"problemDesc\" name=\"problemDesc\"\n      required placeholder=\"Enter Problem Description\" [(ngModel)]=\"newProblem.desc\"></textarea>\n    </div>\n    <div class=\"form-group\">\n      <label for=\"difficulty\">Difficulty</label>\n      <select class=\"form-control\" id=\"difficulty\" name=\"difficulty\"\n      [(ngModel)]=\"newProblem.difficulty\">\n        <option value=\"default\" disabled selected>Select difficulty</option>\n        <option *ngFor=\"let difficulty of difficulties\" [value]=\"difficulty\">\n          {{difficulty}}\n        </option>\n      </select>\n    </div>\n    <div class=\"row\">\n      <div class=\"col-md-12\">\n        <button type=\"submit\" class=\"btn btn-primary pull-left\" (click)=\"addProblem()\">Add Problem</button>\n      </div>\n    </div>\n  </form>\n</div>\n"
 
 /***/ }),
 
@@ -521,6 +537,138 @@ var ProblemListComponent = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/components/profile/profile.component.css":
+/*!**********************************************************!*\
+  !*** ./src/app/components/profile/profile.component.css ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ""
+
+/***/ }),
+
+/***/ "./src/app/components/profile/profile.component.html":
+/*!***********************************************************!*\
+  !*** ./src/app/components/profile/profile.component.html ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <title>Bootstrap Example</title>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css\">\n  <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>\n  <script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js\"></script>\n  <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js\"></script>\n</head>\n<body>\n<br>\n\n<div class=\"container\">\n  <h2>Toggleable Pills</h2>\n  <br>\n  <!-- Nav pills -->\n  <ul class=\"nav nav-pills\" role=\"tablist\">\n    <li class=\"nav-item\">\n      <a class=\"nav-link active\" data-toggle=\"pill\" href=\"#profile\">Personal Information</a>\n    </li>\n    <li class=\"nav-item\">\n      <a class=\"nav-link\" data-toggle=\"pill\" href=\"#password\">Change Password</a>\n    </li>\n  </ul>\n\n  <!-- Tab panes -->\n  <div class=\"tab-content\">\n    <div id=\"profile\" class=\"container tab-pane active\"><br>\n      <div class=\"form-group\">\n        <label for=\"email\">Email</label>\n        <input type=\"text\" class=\"form-control\" id=\"email\" name=\"email\"\n        disabled  value=\"{{email}}\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"username\">Username</label>\n        <input type=\"text\" class=\"form-control\" id=\"username\" name=\"username\"\n        disabled  value=\"{{username}}\">\n      </div>\n    </div>\n    <div id=\"password\" class=\"container tab-pane fade\"><br>\n      <div class=\"col-md-12\">\n        <button type=\"button\" class=\"btn btn-large btn-success\" (click)=\"resetPassword()\">Reset Password</button>\n      </div>\n    </div>\n  </div>\n</div>\n\n</body>\n</html>\n"
+
+/***/ }),
+
+/***/ "./src/app/components/profile/profile.component.ts":
+/*!*********************************************************!*\
+  !*** ./src/app/components/profile/profile.component.ts ***!
+  \*********************************************************/
+/*! exports provided: ProfileComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProfileComponent", function() { return ProfileComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+var ProfileComponent = /** @class */ (function () {
+    function ProfileComponent(auth) {
+        this.auth = auth;
+        this.email = '';
+        this.username = '';
+    }
+    ProfileComponent.prototype.ngOnInit = function () {
+        if (localStorage.getItem('profile')) {
+            this.profile = JSON.parse(localStorage.getItem('profile'));
+            this.email = this.profile.name;
+            this.username = this.profile.nickname;
+        }
+    };
+    ProfileComponent.prototype.resetPassword = function () {
+        this.auth.resetPassword();
+    };
+    ProfileComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-profile',
+            template: __webpack_require__(/*! ./profile.component.html */ "./src/app/components/profile/profile.component.html"),
+            styles: [__webpack_require__(/*! ./profile.component.css */ "./src/app/components/profile/profile.component.css")]
+        }),
+        __param(0, Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"])('auth')),
+        __metadata("design:paramtypes", [Object])
+    ], ProfileComponent);
+    return ProfileComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/services/auth-guard.service.ts":
+/*!************************************************!*\
+  !*** ./src/app/services/auth-guard.service.ts ***!
+  \************************************************/
+/*! exports provided: AuthGuardService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthGuardService", function() { return AuthGuardService; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+
+var AuthGuardService = /** @class */ (function () {
+    function AuthGuardService(auth, router) {
+        this.auth = auth;
+        this.router = router;
+    }
+    AuthGuardService.prototype.canActivate = function () {
+        if (this.auth.isAuthenticated()) {
+            return true;
+        }
+        else {
+            this.router.navigate(['/problems']);
+            return false;
+        }
+    };
+    AuthGuardService = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
+            providedIn: 'root'
+        }),
+        __param(0, Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"])('auth')),
+        __metadata("design:paramtypes", [Object, _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
+    ], AuthGuardService);
+    return AuthGuardService;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/services/auth.service.ts":
 /*!******************************************!*\
   !*** ./src/app/services/auth.service.ts ***!
@@ -535,6 +683,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var auth0_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! auth0-js */ "./node_modules/auth0-js/src/index.js");
 /* harmony import */ var auth0_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(auth0_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _angular_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/http */ "./node_modules/@angular/http/fesm5/http.js");
 // src/app/auth/auth.service.ts
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -548,10 +697,13 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+
 window.global = window;
 var AuthService = /** @class */ (function () {
-    function AuthService(router) {
+    function AuthService(router, http) {
         this.router = router;
+        this.http = http;
         this.auth0 = new auth0_js__WEBPACK_IMPORTED_MODULE_2__["WebAuth"]({
             clientID: 'tVCyhEeI5TDWfbIAw_oVi7Vfz5fDg7e6',
             domain: 'frankyu.auth0.com',
@@ -631,9 +783,33 @@ var AuthService = /** @class */ (function () {
             cb(err, profile);
         });
     };
+    AuthService.prototype.resetPassword = function () {
+        console.log("asdas", this.auth0.domain);
+        var profile = JSON.parse(localStorage.getItem('profile'));
+        var url = "https://frankyu.auth0.com/dbconnections/change_password";
+        var headers = new _angular_http__WEBPACK_IMPORTED_MODULE_3__["Headers"]({ 'content-type': 'application/json' });
+        var body = {
+            client_id: 'tVCyhEeI5TDWfbIAw_oVi7Vfz5fDg7e6',
+            email: profile.name,
+            connection: 'Username-Password-Authentication'
+        };
+        var options = new _angular_http__WEBPACK_IMPORTED_MODULE_3__["RequestOptions"]({
+            headers: headers
+        });
+        this.http.post(url, body, options)
+            .toPromise()
+            .then(function (res) {
+            console.log(res.json());
+        })
+            .catch(this.handleError);
+    };
+    AuthService.prototype.handleError = function (error) {
+        console.log('Error occurred', error);
+        return Promise.reject(error.message || error);
+    };
     AuthService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
-        __metadata("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
+        __metadata("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"], _angular_http__WEBPACK_IMPORTED_MODULE_3__["Http"]])
     ], AuthService);
     return AuthService;
 }());

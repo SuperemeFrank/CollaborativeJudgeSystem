@@ -4,6 +4,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import * as auth0 from 'auth0-js';
+import { Http, Response, Headers} from '@angular/http';
+import { RequestOptions } from "@angular/http";
 
 (window as any).global = window;
 
@@ -19,7 +21,7 @@ export class AuthService {
     scope: 'openid profile'
   });
 
-  constructor(public router: Router) {}
+  constructor(public router: Router, private http: Http) {}
 
   userProfile: any;
 
@@ -86,17 +88,44 @@ export class AuthService {
   }
 
   public getProfile(cb): void {
-  const accessToken = localStorage.getItem('access_token');
-  if (!accessToken) {
-    throw new Error('Access Token must exist to fetch profile');
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      throw new Error('Access Token must exist to fetch profile');
+    }
+
+    const self = this;
+    this.auth0.client.userInfo(accessToken, (err, profile) => {
+      if (profile) {
+        self.userProfile = profile;
+      }
+      cb(err, profile);
+    });
   }
 
-  const self = this;
-  this.auth0.client.userInfo(accessToken, (err, profile) => {
-    if (profile) {
-      self.userProfile = profile;
-    }
-    cb(err, profile);
-  });
-}
+
+  public resetPassword() {
+    console.log("asdas", this.auth0.domain);
+    let profile = JSON.parse(localStorage.getItem('profile'));
+    let url= "https://frankyu.auth0.com/dbconnections/change_password";
+    let headers = new Headers({ 'content-type': 'application/json' });
+    let body = {
+      client_id: 'tVCyhEeI5TDWfbIAw_oVi7Vfz5fDg7e6',
+      email: profile.name,
+      connection: 'Username-Password-Authentication'
+    };
+    let options = new RequestOptions({
+      headers: headers
+    });
+    this.http.post(url, body, options)
+            .toPromise()
+            .then((res: Response) => {
+              console.log(res.json());
+            })
+            .catch(this.handleError);
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.log('Error occurred', error);
+    return Promise.reject(error.message || error);
+  }
 }
