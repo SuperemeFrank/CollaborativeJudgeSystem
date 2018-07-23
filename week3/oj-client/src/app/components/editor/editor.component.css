@@ -1,0 +1,43 @@
+@media screen {
+  .lang-select {
+    width: 100px;
+    margin-right: 10px;
+  }
+  header.btn {
+    margin: 0.5px;
+  }
+  footer .btn {
+    margin: 0.5px;
+  }
+  .editor-footer, .editor-header {
+    marigin: 10px 0;
+  }
+  .cursor {
+    background: rgba(0, 250, 0, 0.5);
+    z-index: 40;
+    width: 2px!important
+  }
+#editor {
+        position: absolute;
+        top: 100px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 600px;
+        font-size: 20px;
+  }
+  #resetBt {
+    position: relative;
+    top: 10px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  .editor-footer {
+    position: relative;
+    top: 630px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}

@@ -18,9 +18,8 @@ export class AuthService {
     responseType: 'token id_token',
     audience: 'https://frankyu.auth0.com/userinfo',
     redirectUri: 'http://localhost:3000',
-    scope: 'openid profile'
+    scope: 'openid profile email'
   });
-
   constructor(public router: Router, private http: Http) {}
 
   userProfile: any;
@@ -66,7 +65,7 @@ export class AuthService {
           resolve();
         }
       });
-    })
+    });
 
   }
 
@@ -101,16 +100,35 @@ export class AuthService {
       cb(err, profile);
     });
   }
-
+  // public getUserProfile() {
+  // 
+  //   let user_id = JSON.parse(this.userProfile).sub;
+  //   let token = localStorage.getItem('id_token');
+  //   console.log("userid " + user_id);
+  //   console.log("token " +  token);
+  //   let url = `https://frankyu.auth0.com/api/v2/users/${user_id}`;
+  //   console.log("url " + url);
+  //   let headers = new Headers({
+  //     'Authorization' : `Bearer ${token}`,
+  //     'Access-Control-Allow-Origin' : "*"
+  //    });
+  //    let options = new RequestOptions({
+  //      headers: headers
+  //    });
+  //   this.http.get(url, options)
+  //           .toPromise()
+  //           .then((res: Response) => {
+  //             localStorage.set('metaProfile', res);
+  //           }).catch();
+  // }
 
   public resetPassword() {
-    console.log("asdas", this.auth0.domain);
     let profile = JSON.parse(localStorage.getItem('profile'));
     let url= "https://frankyu.auth0.com/dbconnections/change_password";
     let headers = new Headers({ 'content-type': 'application/json' });
     let body = {
       client_id: 'tVCyhEeI5TDWfbIAw_oVi7Vfz5fDg7e6',
-      email: profile.name,
+      email: profile.email,
       connection: 'Username-Password-Authentication'
     };
     let options = new RequestOptions({
@@ -122,6 +140,10 @@ export class AuthService {
               console.log(res.json());
             })
             .catch(this.handleError);
+  }
+
+  public getRoles() {
+    let url
   }
 
   private handleError(error: any): Promise<any> {

@@ -15,10 +15,12 @@ export class NavbarComponent {
         .then(userProfile => {
           console.log("nav then")
           this.profile = userProfile;
+        //  this.auth.getUserProfile();
         })
         .catch();
   }
   ngOnInit(){
+
     if (localStorage.getItem('profile')) {
       this.profile = JSON.parse(localStorage.getItem('profile'));
     }
