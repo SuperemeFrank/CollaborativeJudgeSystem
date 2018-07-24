@@ -50,13 +50,13 @@ export class EditorComponent implements OnInit {
     this.resetEditor();
     this.editor.resize();
     document.getElementsByTagName('textarea')[0].focus();
-    this.collaboration.init();
+    this.collaboration.init(this.editor, this.sessionId);
     this.editor.lastAppliedChange = null; // avoid duplicate change broadcast
 
     this.editor.on('change', (e) => { // check if edit change
       console.log('editor changes: ' + JSON.stringify(e));
-      if (this.editor.lastAppliedChange != e)c{
-        this.collaboration.change(JSON.string(e));
+      if (this.editor.lastAppliedChange != e){
+        this.collaboration.change(JSON.stringify(e));
       }
     });
   }
