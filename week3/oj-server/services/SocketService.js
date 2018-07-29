@@ -44,7 +44,7 @@ module.exports = function(io) {
       let sessionId = socketIdToSessionId[socket.id];
 
       if (sessionId in collaborations) {
-        collaborations[sessionId]['cachedChangeEvents'].push(["change", delta, Data.now()]);
+        collaborations[sessionId]['cachedChangeEvents'].push(["change", delta, Date.now()]);
       }
 
       forwardEvents(socket.id, 'change', delta);

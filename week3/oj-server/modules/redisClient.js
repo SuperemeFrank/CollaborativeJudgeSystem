@@ -2,7 +2,7 @@ var redis = require('redis');
 var client = redis.createClient();
 
 function set(key, value, callback) {
-  client.set(ket, value, function(err, res) {
+  client.set(key, value, function(err, res) {
     if (err) {
       console.log(err);
       return;

@@ -15,6 +15,10 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { EditorComponent } from './components/editor/editor.component';
 import { CollaborationService } from './services/collaboration.service';
+import { SearchPipe } from './pipes/search.pipe';
+import { InputService } from './services/input.service';
+import { ReactiveFormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,14 +27,16 @@ import { CollaborationService } from './services/collaboration.service';
     NewProblemComponent,
     NavbarComponent,
     ProfileComponent,
-    EditorComponent
+    EditorComponent,
+    SearchPipe
   ],
   imports: [
     BrowserModule,
     NgbModule.forRoot(),
     routing,
     FormsModule,
-    HttpModule
+    HttpModule,
+    ReactiveFormsModule
   ],
   providers: [
     {
@@ -49,6 +55,10 @@ import { CollaborationService } from './services/collaboration.service';
     {
       provide: "collaboration",
       useClass: CollaborationService
+    },
+    {
+      provide: "input",
+      useClass: InputService
     }
   ],
   bootstrap: [AppComponent]
